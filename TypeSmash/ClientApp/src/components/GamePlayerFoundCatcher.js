@@ -7,6 +7,7 @@ export default class GamePlayerFoundCatcher extends Component{
     }
 
     addWordToState = (word) => {
+        console.log("adding word: " + word)
         this.setState({receivedText: this.state.receivedText + " " + word});
     }
 
