@@ -25,9 +25,12 @@ export default class GamePlayerRoleWriter extends Component{
         return [firstWord, secondWord]
     }
 
-    keyPressed = (e) => {
+    keyPressed = (event) => {
 
-        let charEnteredKeyCode = e.keyCode;
+        let charEnteredKeyCode = event.keyCode;
+        let charEntered = String.fromCharCode(
+            charEnteredKeyCode.toString()
+          );
 
         let spaceCharKeyCode = 32,
             enterKeyCode = 13;
@@ -36,20 +39,27 @@ export default class GamePlayerRoleWriter extends Component{
           let props = this.props;
           let sendNewWrittenWord = props.sendNewWrittenWord;
 
-          let inputText = e.target.value;
+          let inputText = event.target.value;
 
-          // a fix to the fact we can write fast and add letters to the input field while keyPressed is being called
-          if(this.hasCharactersAfterSpace(inputText)){
-            [inputText, e.target.value] = this.separateInputWords(inputText);
+          console.log(inputText);
+
+          if (inputText === " ") {
+            event.target.value = "";
+          } else {
+            // a fix to the fact we can write fast and add letters to the input field while keyPressed is being called
+            if (this.hasCharactersAfterSpace(inputText)) {
+              [inputText, event.target.value] = this.separateInputWords(
+                inputText
+              );
+            } else {
+              event.target.value = "";
+            }
+
+            sendNewWrittenWord(inputText);
+            this.setState({ writtenText: this.state.writtenText + inputText });
           }
-          else{
-            e.target.value = "";
-          }
 
-          let charEntered = String.fromCharCode(charEnteredKeyCode.toString());
-
-          sendNewWrittenWord(inputText);
-          this.setState({ writtenText: this.state.writtenText + inputText });
+          
         }
     }
 
