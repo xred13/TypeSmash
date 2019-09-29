@@ -1,32 +1,22 @@
 import React, {Component} from "react";
-import { isBuffer } from "util";
-
-let color= {
-    NEUTRAL: "black",
-    RED: "red",
-    GREEN: "green"
-}
-
-class Letter{
-    letter = "";
-    color = color.NEUTRAL;
-
-    constructor(letter){
-        this.letter = letter;
-        this.color = color.NEUTRAL;
-    }
-}
+import {Letter, color} from "./../classes/Letter";
 
 export default class GamePlayerFoundCatcher extends Component{
 
     state = {
         receivedTextLetterArray: [],
-        currentArrayElement: 0,
-        wrongLetterCount: 0
+        currentArrayElement: 0
+    }
+
+    stateIncrementCurrentArrayElement = () => {
+        this.setState({currentArrayElement: this.state.currentArrayElement+1});
+    }
+
+    stateDecrementCurrentArrayElement = () => {
+        this.setState({currentArrayElement: this.state.currentArrayElement-1});
     }
 
     addWordToState = (word) => {
-        console.log("adding word: " + word)
 
         let newWordLetterArray = word.split("");
         let newArray = []
@@ -37,21 +27,23 @@ export default class GamePlayerFoundCatcher extends Component{
         this.setState({receivedTextLetterArray: this.state.receivedTextLetterArray.concat(newArray)});
 
     }
+    
 
-    onKeyPress = (event) => {
+    changeArrayElementColor = (index, color) => {
+        let newArray = [...this.state.receivedTextLetterArray];
+        newArray[index].color = color;
+        this.setState({receivedTextLetterArray: newArray});
+    }
 
-        let charEnteredKeyCode = event.keyCode;
-        let charEntered = String.fromCharCode(charEnteredKeyCode);
+    backSpaceClicked = () => {
+        if(this.state.receivedTextLetterArray[this.state.currentArrayElement-1].letter !==  " "){
+            this.changeArrayElementColor(this.state.currentArrayElement-1, color.NEUTRAL);
+            this.stateDecrementCurrentArrayElement();
+        }    
+    }
 
-        if(!event.shiftKey){
-            charEntered = charEntered.toLowerCase();
-        }
+    changeCurrentArrayElementColor = (charEntered) => {
 
-        let spaceCharKeyCode = 32,
-            enterKeyCode = 13;
-
-        console.log("char entered:"+charEntered);
-        console.log("receivedtextletter:"+this.state.receivedTextLetterArray[this.state.currentArrayElement]);
         if(charEntered === this.state.receivedTextLetterArray[this.state.currentArrayElement].letter){
             let newArray = [...this.state.receivedTextLetterArray];
             newArray[this.state.currentArrayElement].color = color.GREEN;
@@ -63,8 +55,41 @@ export default class GamePlayerFoundCatcher extends Component{
             this.setState({receivedTextLetterArray: newArray});
         }
 
-        this.setState({currentArrayElement: this.state.currentArrayElement+1});
+        this.stateIncrementCurrentArrayElement();
     }
+
+    onKeyPress = (event) => {
+
+        let spaceKeyCode = 32,  backSpaceKeyCode = 8;
+
+        let charEnteredKeyCode = event.keyCode;
+        let charEntered = String.fromCharCode(charEnteredKeyCode);
+
+        this.props.sendWriterNewKeyPressKeyCode(charEnteredKeyCode);
+
+        if(!event.shiftKey){
+            charEntered = charEntered.toLowerCase();
+        }
+
+        if(charEnteredKeyCode === spaceKeyCode){
+            if(this.state.receivedTextLetterArray[this.state.currentArrayElement].letter === " "){
+                event.target.value = "";
+                this.stateIncrementCurrentArrayElement();
+            }
+            else{
+                event.target.value = event.target.value.substring(0, event.target.value.length - 1);
+            }
+        }
+        else if(charEnteredKeyCode === backSpaceKeyCode){
+            this.backSpaceClicked();
+        }
+        else{
+            if(this.state.receivedTextLetterArray[this.state.currentArrayElement].letter !== " "){
+                this.changeCurrentArrayElementColor(charEntered);
+            }
+        }
+    }
+    
 
 
     render(){

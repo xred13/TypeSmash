@@ -10,15 +10,17 @@ export default class GamePlayerFound extends Component{
         let props = this.props;
         let playerRole = props.playerRole;
         let sendNewWrittenWord = props.sendNewWrittenWord;
+        let sendWriterNewKeyPressKeyCode = props.sendWriterNewKeyPressKeyCode;
+        let sendWriterNewKeyPressKeyCodeRef = props.sendWriterNewKeyPressKeyCodeRef;
         let catcherNewWordReceivedRef = props.catcherNewWordReceivedRef;
 
         return(
             <div>
                 {playerRole === playerRoles.WRITER ? 
-                    <GamePlayerFoundWriter sendNewWrittenWord={sendNewWrittenWord}/>
+                    <GamePlayerFoundWriter sendNewWrittenWord={sendNewWrittenWord} ref={sendWriterNewKeyPressKeyCodeRef}/>
                     
                 : playerRole === playerRoles.CATCHER ?
-                    <GamePlayerFoundCatcher ref={catcherNewWordReceivedRef} />
+                    <GamePlayerFoundCatcher sendWriterNewKeyPressKeyCode={sendWriterNewKeyPressKeyCode} ref={catcherNewWordReceivedRef} />
                 :
                     null
                 }

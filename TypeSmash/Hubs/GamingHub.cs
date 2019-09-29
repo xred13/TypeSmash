@@ -56,6 +56,11 @@ namespace TypeSmash.Hubs
             Clients.OthersInGroup(groupId).SendAsync("receiveNewWrittenWord", word);
         }
 
+        public void ReceiveAndSendNewKeyPressKeyCodeToWriter(string keyCode, string groupId)
+        {
+            Clients.OthersInGroup(groupId).SendAsync("receiveCatchersNewKeyPressKeyCode", keyCode);
+        }
+
         public async void CreateGroup()
         {
             string firstInQueueID;

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {withRouter} from "react-router";
+import {Alert, Button, ButtonToolbar} from "react-bootstrap";
 
 class Login extends Component{
 
@@ -29,7 +30,6 @@ class Login extends Component{
 
     axios.post("https://localhost:5001/api/isusernamevalid/" + username)
       .then((response) => {
-        console.log("RESPONSE DATA: " + response.data);
         if(response.data){
           this.setUsernameAvailability(true);
         }
@@ -38,14 +38,12 @@ class Login extends Component{
         }
       })
       .catch(response => {
-        console.log("Unable to connect with the server");
         this.setUsernameAvailability(false);
       })
   }
 
   setUsernameAvailability = (available) => {
     this.setState({usernameAvailable: available});
-    console.log("Setting username availability to " + available);
   }
 
   submitUsername = (event) => {
@@ -53,35 +51,44 @@ class Login extends Component{
     axios.post("https://localhost:5001/api/submitusername/" + this.state.username)
       .then(response => {
         if(response.status === 200){
-          console.log("username submited");
           this.props.history.push("/game");
         }
         else if (response.status === 500){
-          console.log("failed to submit");
         }
       })
   }
 
   render(){
-    return(
-      <div className="login-form">
-        <form>
-          <label>
-            Username:
-            <input type="text" id="username" onChange={this.onChangeUpdateState}/>
-          </label>
-          
-          <input type="submit" value="Play!" onClick={this.submitUsername}/>
-        </form>
-        {this.state.usernameAvailable ? 
-        <div>
-          Username available
+    return (
+      <div className="login-main-div">
+        <div className="login-form-main">
+          <div className="login-form">
+            <form>
+              <input
+                type="text"
+                id="username"
+                onChange={this.onChangeUpdateState}
+                placeholder="Username"
+              />
+            </form>
+            <div className="login-form-warning">
+              {this.state.usernameAvailable ? (
+                <Alert bsStyle="success" className="login-form-warning-alert" >Username available</Alert>
+              ) : (
+                <Alert bsStyle="danger" className="login-form-warning-alert">Username unavailable</Alert>
+              )}
+            </div>
+            <ButtonToolbar>
+              <Button
+                bsStyle="success"
+                bsSize="large"
+                onClick={this.submitUsername}
+              >
+                Play!
+              </Button>
+            </ButtonToolbar>
+          </div>
         </div>
-        :
-        <div>
-          Username unavailable
-        </div>
-        }
       </div>
     );
   }

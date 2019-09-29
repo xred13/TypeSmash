@@ -32,6 +32,7 @@ class Game extends Component{
     constructor(props){
         super(props);
         this.catcherNewWordReceivedRef = React.createRef();
+        this.sendWriterNewKeyPressKeyCodeRef = React.createRef();
     }
 
     state = {
@@ -71,6 +72,16 @@ class Game extends Component{
         this.catcherNewWordReceivedRef.current.addWordToState(word);
     }
 
+    sendWriterNewKeyPressKeyCode = (keyCode) => {
+        this.state.hubConnection
+        .invoke("ReceiveAndSendNewKeyPressKeyCodeToWriter", keyCode, this.state.groupId)
+        .catch(error => console.error(error));
+    }
+
+    receiveCatchersNewKeyPressKeyCode = (keyCode) => {
+        this.sendWriterNewKeyPressKeyCodeRef.current.addCatcherKeyPressToState(keyCode);
+    }
+
     lookingForPlayers = () => {
         console.log("looking for players!");
         this.setState({gameState: gameState.LOOKINGFORPLAYERS});
@@ -88,8 +99,8 @@ class Game extends Component{
 
             this.state.hubConnection.on("playerFound", this.playerFound);
             this.state.hubConnection.on("playerRole", this.playerRole);
-            this.state.hubConnection.on("sendNewWrittenWord", this.sendNewWrittenWord);
             this.state.hubConnection.on("receiveNewWrittenWord", this.receiveNewWrittenWord);
+            this.state.hubConnection.on("receiveCatchersNewKeyPressKeyCode", this.receiveCatchersNewKeyPressKeyCode);
 
             this.state.hubConnection.start().then(() => {
                 console.log("Connected to the hub!");
@@ -107,7 +118,9 @@ class Game extends Component{
             ) : this.state.gameState === gameState.PLAYERFOUND ? (
               <GamePlayerFound
                 catcherNewWordReceivedRef={this.catcherNewWordReceivedRef}
+                sendWriterNewKeyPressKeyCodeRef={this.sendWriterNewKeyPressKeyCodeRef}
                 sendNewWrittenWord={this.sendNewWrittenWord}
+                sendWriterNewKeyPressKeyCode={this.sendWriterNewKeyPressKeyCode}
                 playerRole={this.state.playerRole}
               />
             ) : (
