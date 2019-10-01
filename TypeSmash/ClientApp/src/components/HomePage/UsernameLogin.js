@@ -3,27 +3,48 @@ import axios from 'axios';
 import {withRouter} from "react-router";
 import {Alert, Button, ButtonToolbar} from "react-bootstrap";
 
-class Login extends Component{
+class UsernameLogin extends Component{
 
   state = {
     username: "",
-    usernameAvailable: false
+    isUsernameValid: false,
+    isUsernameAvailable: false
   }
 
-  onChangeUpdateState = (event) => {
+  isUsernameValid = () => {
+    return this.state.isUsernameValid;
+  }
 
-    const inputId = event.target.id;
-    const inputValue = event.target.value;
+  isUsernameAvailable = () => {
+    return this.state.isUsernameAvailable;
+  }
+
+  isOnlyLettersAndNumbers = (str) => {
+    return str.match("^[A-z0-9]+$");
+  }
+
+  setUsernameValidity = (username) => {
+    if(this.isOnlyLettersAndNumbers(username)){
+      this.setState({isUsernameValid: true});
+    }
+    else{
+      this.setState({isUsernameValid: false});
+    }
+  }
+
+  onChangeUpdateStateUsername = (event) => {
+
+    const username = event.target.value;
+
+    this.setUsernameValidity(username);
 
     this.setState({
-      [inputId]: inputValue
+      username: username
     });
   }
 
-  componentWillUpdate(nextProps, nextState){
-    if(nextState.username !== this.state.username){
-      this.checkUsernameAvailability(nextState.username);
-    }
+  setUsernameAvailability = (availability) => {
+    this.setState({usernameAvailable: availability});
   }
 
   checkUsernameAvailability = (username) => {
@@ -42,8 +63,12 @@ class Login extends Component{
       })
   }
 
-  setUsernameAvailability = (available) => {
-    this.setState({usernameAvailable: available});
+  componentWillUpdate(nextProps, nextState){
+
+    // if the update is caused by a change in the username input field, we ask the server if the new username is available
+    if(this.isUsernameValid && nextState.username !== this.state.username){
+      this.checkUsernameAvailability(nextState.username);
+    }
   }
 
   submitUsername = (event) => {
@@ -67,12 +92,14 @@ class Login extends Component{
               <input
                 type="text"
                 id="username"
-                onChange={this.onChangeUpdateState}
+                onChange={this.onChangeUpdateStateUsername}
                 placeholder="Username"
               />
             </form>
             <div className="login-form-warning">
-              {this.state.usernameAvailable ? (
+              {this.isUsernameValid === false ? (
+                <Alert bsStyle="danger" className="login-form-warning-alert">Invalid Username</Alert>
+              ) : this.isUsernameAvailable ? (
                 <Alert bsStyle="success" className="login-form-warning-alert" >Username available</Alert>
               ) : (
                 <Alert bsStyle="danger" className="login-form-warning-alert">Username unavailable</Alert>
@@ -94,6 +121,6 @@ class Login extends Component{
   }
 }
 
-export default withRouter(Login);
+export default withRouter(UsernameLogin);
 
 
