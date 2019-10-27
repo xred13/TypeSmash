@@ -1,14 +1,11 @@
 import React, {Component} from "react";
 import { HubConnection } from "@aspnet/signalr";
+import { withRouter } from "react-router";
 
 class GameMenu extends Component{
 
-    state = {
-        hubConnection: null
-    }
-
     playButtonClicked = () => {
-
+        this.props.history.push("/game");
     }
 
     render(){
@@ -20,4 +17,4 @@ class GameMenu extends Component{
     }
 }
 
-export default GameMenu;
+export default withRouter(GameMenu);

@@ -29,7 +29,7 @@ namespace TypeSmash.Controllers
             // checking if there is a char that isn't either a letter or digit in the string provided
             foreach(char character in username)
             {
-                if (!Char.IsLetterOrDigit(character)){
+                if (!char.IsLetterOrDigit(character)){
                     return false;
                 }
             }
@@ -111,7 +111,5 @@ namespace TypeSmash.Controllers
                 return Ok();
             }
         }
-
-        
     }
 }

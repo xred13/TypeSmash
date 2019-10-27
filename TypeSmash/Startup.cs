@@ -66,7 +66,7 @@ namespace TypeSmash
 
             app.UseSignalR(routes =>
             {
-                routes.MapHub<GamingHub>("/gaminghub");
+                routes.MapHub<GameHub>("/gamehub");
             });
 
             app.UseMvc(routes =>
