@@ -10,6 +10,6 @@ export default () => (
   <div id="main-container">
     <Route exact path='/' component={HomePage} />
     <Route exact path="/gamemenu" component={GameMenu} />
-    <Route exact path="/game" component={Game} />
+    <Route exact path="/game" component={Game} />;
   </div>
 );

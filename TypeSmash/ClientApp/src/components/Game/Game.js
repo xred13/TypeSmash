@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import * as signalR from "@aspnet/signalr";
 import Catcher from "./Catcher";
 import Writer from "./Writer";
-import Cookies from "universal-cookie";
 
 export default class Game extends Component{
 
@@ -12,26 +11,21 @@ export default class Game extends Component{
         playerRole: ""
     }
 
-    setGroupIdCookieAndPlayerRole = (groupId, playerRole) => {
-
-        console.log(playerRole);
-
-        localStorage.setItem("groupId", groupId);
-
+    playerRole = (playerRole) => {
         this.setState({gameReady: true, playerRole: playerRole});
     }
 
     initializeHubConnection = () => {
         let hubConnection = new signalR.HubConnectionBuilder().withUrl("gamehub").build();
 
-        hubConnection.on("setGroupIdCookieAndPlayerRole", this.setGroupIdCookieAndPlayerRole);
+        hubConnection.on("PlayerRole", this.playerRole);
 
         this.setState({hubConnection: hubConnection}, () => {
             this.state.hubConnection.start();
         });
     }
 
-    componentDidMount = () => {
+    componentWillMount = () => {
         this.initializeHubConnection();
     }
 
@@ -43,9 +37,9 @@ export default class Game extends Component{
                 <div> LFP </div>
                 :
                 this.state.playerRole === "Writer" ? 
-                <Writer hubConnection={this.state.hubConnection}/>  
+                <Writer />  
                 : this.state.playerRole === "Catcher" ?
-                <Catcher hubConnection={this.state.hubConnection}/>
+                <Catcher />
                 :
                 <div> Something has occurred! </div>
             }
