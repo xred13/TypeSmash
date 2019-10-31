@@ -35,7 +35,7 @@ namespace TypeSmash.Hubs
             return playerRoles;
         }
 
-        public async Task CreateGroupAndSendRoles()
+        public async Task CreateGroupSendGroupIdAndRoles()
         {
             string firstPlayerInQueueConnectionId;
 
@@ -48,15 +48,16 @@ namespace TypeSmash.Hubs
                 await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
 
                 string[] playerRoles = GetPlayerRoles();
-
-                await Clients.Caller.SendAsync("PlayerRole", playerRoles[0]);
-                await Clients.OthersInGroup(groupId).SendAsync("PlayerRole", playerRoles[1]);
+                
+                await Clients.Caller.SendAsync("setGroupIdCookieAndPlayerRole", groupId, playerRoles[0]);
+                await Clients.OthersInGroup(groupId).SendAsync("setGroupIdCookieAndPlayerRole", groupId, playerRoles[1]);
             }
             else {  }
         }
 
         public async override Task OnConnectedAsync()
         {
+
             string thisPlayerConnectionId = Context.ConnectionId;
 
             if(playerConnectionIdQueue.Count == 0)
@@ -65,8 +66,18 @@ namespace TypeSmash.Hubs
             }
             else
             {
-                await CreateGroupAndSendRoles();
+                await CreateGroupSendGroupIdAndRoles();
             }
+        }
+
+        public async void WriterInputSent(string groupId, string inputSent)
+        {
+            await Clients.OthersInGroup(groupId).SendAsync("receiveWriterInput", inputSent);
+        }
+
+        public async void CatcherKeyPressSent(string groupId, string keyPress)
+        {
+            await Clients.OthersInGroup(groupId).SendAsync("receiveCatcherKeyPress", keyPress);
         }
     }
 }

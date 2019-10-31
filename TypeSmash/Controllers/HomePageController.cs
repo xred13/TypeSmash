@@ -37,6 +37,11 @@ namespace TypeSmash.Controllers
             return true;
         }
 
+        public void AddUsernameCookie(string username)
+        {
+            HttpContext.Response.Cookies.Append("Username", username);
+        }
+
         [HttpPost("[action]/{username}")]
         public async Task<IActionResult> IsUsernameAvailable(string username)
         {
@@ -46,47 +51,18 @@ namespace TypeSmash.Controllers
                 return BadRequest(); // invalid username
             }
 
-
             var player = await appDbContext.Players.FindAsync(username);
 
             if (player != null)
             {
-                Console.WriteLine("THERE ALREADY HAS ONE!");
 
                 return Ok(false); // username unavailable
             }
             else
             {
-                Console.WriteLine("THERE ARENT ANY");
-
+                AddUsernameCookie(username);
                 return Ok(true); // username available
             }
-        }
-
-        public string NewJWTToken(string username)
-        {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
-                new Claim(JwtRegisteredClaimNames.NameId, username)
-            };
-
-            var credentials = new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ThisIsMySuperSecretKey")), SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                signingCredentials: credentials
-                );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        public void AppendJWTCookieToResponse(string username)
-        {
-            string token = NewJWTToken(username);
-
-            Response.Cookies.Append("JWTToken", token);
         }
 
         [HttpPost("[action]/{username}")]
@@ -105,8 +81,6 @@ namespace TypeSmash.Controllers
                 Player newPlayer = new Player { ID = username };
                 await appDbContext.Players.AddAsync(newPlayer);
                 await appDbContext.SaveChangesAsync();
-
-                AppendJWTCookieToResponse(username);
                 
                 return Ok();
             }
