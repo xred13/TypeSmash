@@ -1,17 +1,19 @@
 import React, {Component} from "react";
 import Text, { Color } from "./../../classes/Text";
 import { TextDisplaying } from "./TextDisplaying";
+import { isSingleLetterOrDigitOrAllowed } from "./Helper";
 
 export default class Writer extends Component {
 
     state = {
         hubConnection: null,
-        text: new Text()
+        text: new Text(),
+        enterKeyPressed: 0
     }
 
-    sendInput = (inputSent) => {
-        let groupId = localStorage.getItem("groupId");
-        this.state.hubConnection.invoke("WriterInputSent", groupId, inputSent);
+    sendInput = async (inputSent) => {
+        let groupId = sessionStorage.getItem("groupId");
+        await this.state.hubConnection.invoke("WriterInputSent", groupId, inputSent);
     }
 
     addInputToTextState = (input) => {
@@ -20,9 +22,25 @@ export default class Writer extends Component {
         this.setState({text: text});
     }
 
-    handleInputOnKeyDown = (event) => {
+    handleInputOnKeyDown = async (event) => {
 
         let keyPressed = event.key;
+
+        if(this.props.gameEnded || !isSingleLetterOrDigitOrAllowed(keyPressed)){
+            event.preventDefault();
+            return;
+        }
+
+        if(keyPressed === "Enter"){
+            if(this.state.enterKeyPressed === 1){
+                this.props.endGame();
+                await this.sendInput("End Game");
+            }
+            else{
+                this.setState({enterKeyPressed: this.state.enterKeyPressed + 1});
+            }
+            return;
+        }
 
         switch(keyPressed){
             case " ":
@@ -42,16 +60,9 @@ export default class Writer extends Component {
     receiveCatcherKeyPress = (keyPress) => {
         let text = this.state.text;
 
-        let textElement = text.getCurrentElement();
+        console.log(keyPress);
 
-        if(keyPress === textElement.char){
-            text.setCurrentElementColorGreen();
-        }
-        else{
-            text.setCurrentElementColorRed();
-        }
-
-        text.incrementCurrentTextPositionIndex();
+        text.handleKeyPressed(keyPress);
 
         this.setState({text: text});
     }

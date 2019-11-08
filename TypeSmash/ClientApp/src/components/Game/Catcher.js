@@ -1,17 +1,45 @@
 import React, {Component} from "react";
 import Text from "./../../classes/Text";
 import { TextDisplaying } from "./TextDisplaying";
-import { isSingleLetterOrDigit } from "./Helper";
+import { isSingleLetterOrDigitOrAllowed } from "./Helper";
 import assert from "assert";
+import { Color } from "./../../classes/Text";
 
 export default class Catcher extends Component {
     state = {
         hubConnection: null,
-        text: new Text()
+        text: new Text(),
+        catcherTextIndex: 0,
+        writerGameEnded: false
+    }
+
+    canSubmit = () => {
+        let text = this.state.text;
+
+        for(let i = this.state.catcherTextIndex; i < text.textElements.length; i++){
+            if(text.textElements[i].backgroundColor === Color.RED){
+                return false;
+            }
+            if(text.textElements[i].color === Color.NEUTRAL){
+                return true;
+            }
+        }
+
+        this.setState({catcherTextIndex: this.state.catcherTextIndex + 1});
+
+        return true;
     }
 
     receiveWriterInput = (input) => {
         assert(typeof(input) === "string", "Input must be of type string!");
+
+        if(input === "End Game"){
+            this.setState({writerGameEnded: true});
+            if(this.canSubmit() && this.state.text.currentTextPositionIndex === this.state.text.textElements.length){
+                this.props.endGame();
+            }
+            return;
+        }
 
         let text = this.state.text;
         text.addInput(input);
@@ -22,8 +50,7 @@ export default class Catcher extends Component {
     sendKeyPressToWriter = (keyPressed) => {
         assert(typeof(keyPressed) === "string");
 
-        this.state.hubConnection.invoke("CatcherKeyPressSent", localStorage.getItem("groupId"), keyPressed);
-        
+        this.state.hubConnection.invoke("CatcherKeyPressSent", sessionStorage.getItem("groupId"), keyPressed);
     }
 
     compareKeyPressToText = (keyPressed) => {
@@ -33,50 +60,36 @@ export default class Catcher extends Component {
             return;
         }
         
-        if(keyPressed === text.getCurrentElement().char){
-            text.setCurrentElementColorGreen();
-        }
-        else{
-            text.setCurrentElementColorRed();
-        }
-
-        text.incrementCurrentTextPositionIndex();
-        this.setState({text: text});
-    }
-
-    handleBackSpace = () => {
-        let text = this.state.text;
-
-        if(text.textElements[text.currentTextPositionIndex-1].char === " "){
-            return;
-        }
-
-        text.handleBackSpace();
-        this.sendKeyPressToWriter("BackSpace");
+        text.setCurrentElementColor(keyPressed);
 
         this.setState({text: text});
     }
 
     handleOnKeyDown = (event) => {
+        let keyPressed = event.key;
 
-        if(this.state.text.currentTextPositionIndex >= this.state.text.textElements.length){
+        let text = this.state.text;
+
+        if(this.props.gameEnded || !isSingleLetterOrDigitOrAllowed(keyPressed) || keyPressed === "Backspace" && event.target.value === "" || text.currentTextPositionIndex >= text.textElements.length && keyPressed !== "Backspace"){
+            event.preventDefault();
             return;
         }
 
-        let keyPressed = event.key;
-
-        if(keyPressed === "Backspace"){
-            this.handleBackSpace();
-        }
-        else if(isSingleLetterOrDigit(keyPressed) || keyPressed === " "){
-            this.sendKeyPressToWriter(keyPressed);
-            this.compareKeyPressToText(keyPressed);
-
-            if(keyPressed === " "){
+        if(keyPressed === " "){
+            if(text.currentTextPositionIndex < text.textElements.length && text.textElements[text.currentTextPositionIndex].char === " " && this.canSubmit()){
                 event.preventDefault();
                 event.target.value = "";
             }
         }
+
+        text.handleKeyPressed(keyPressed);
+        this.sendKeyPressToWriter(keyPressed);
+
+        if(this.canSubmit() && this.state.writerGameEnded && text.currentTextPositionIndex === text.textElements.length){
+            this.props.endGame();
+        }
+
+        this.setState({text: text});
     }
 
     render(){

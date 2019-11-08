@@ -7,7 +7,7 @@ export const TextDisplaying = (props) => {
     return(
         <div>
             {text.textElements.map((element, i) => (
-                <span style={{color: element.color}} key={i}>
+                <span style={{color: element.color, backgroundColor: element.backgroundColor}} key={i}>
                     {element.char}
                 </span>
             ))

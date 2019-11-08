@@ -73,6 +73,7 @@ class UsernameLogin extends Component{
     axios.post("https://localhost:5001/homepage/submitusername/" + this.state.username)
       .then(response => {
         if(response.status === 200){
+          sessionStorage.setItem("username", this.state.username);
           this.props.history.push("/gamemenu");
         }
         else if (response.status === 500){

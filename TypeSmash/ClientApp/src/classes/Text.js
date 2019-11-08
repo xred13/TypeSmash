@@ -9,14 +9,10 @@ export default class Text{
     }
 
     incrementCurrentTextPositionIndex = () => {
-        assert(this.currentTextPositionIndex < this.textElements.length-1);
-
         this.currentTextPositionIndex++;
     }
 
     decrementCurrentTextPositionIndex = () => {
-        assert(this.currentTextPositionIndex > 0);
-
         this.currentTextPositionIndex--;
     }
 
@@ -28,28 +24,38 @@ export default class Text{
         return this.textElements[index];
     }
 
-    setCurrentElementColorRed = () => {
-        this.textElements[this.currentTextPositionIndex].color = Color.RED;
+    handleKeyPressed = (keyPressed) => {
+        if(keyPressed === "Backspace"){
+            this.handleBackSpace();
+        }
+        else{
+            this.setCurrentElementColor(keyPressed);
+        }
     }
 
-    setCurrentElementColorGreen = () => {
-        this.textElements[this.currentTextPositionIndex].color = Color.GREEN;
+    setCurrentElementColor = (keyPressed) => {
+        if(this.currentTextPositionIndex < this.textElements.length){
+            if(this.textElements[this.currentTextPositionIndex].char === keyPressed){
+                this.textElements[this.currentTextPositionIndex].color = Color.GREEN;
+                this.textElements[this.currentTextPositionIndex].backgroundColor = Color.WHITE;
+            }
+            else{
+                this.textElements[this.currentTextPositionIndex].color = Color.NEUTRAL;
+                this.textElements[this.currentTextPositionIndex].backgroundColor = Color.RED;
+            }
+        }
+
+        this.incrementCurrentTextPositionIndex();
     }
 
-    setCurrentElementColorNeutral = () => {
+    handleBackSpace = () => {
+        if(this.currentTextPositionIndex - 1 < 0){
+            return;
+        }
+
+        this.decrementCurrentTextPositionIndex();
         this.textElements[this.currentTextPositionIndex].color = Color.NEUTRAL;
-    }
-
-    setElementColorAtIndexGreen = (index) => {
-        this.textElements[index].color = Color.GREEN;
-    }
-
-    setElementColorAtIndexRed = (index) => {
-        this.textElements[index].color = Color.RED;
-    }
-
-    setElementColorAtIndexNeutral = (index) => {
-        this.textElements[index].color = Color.NEUTRAL;
+        this.textElements[this.currentTextPositionIndex].backgroundColor = Color.WHITE;
     }
 
     addInput = (input) => {
@@ -59,18 +65,12 @@ export default class Text{
             this.textElements.push(newTextElement);
         }
     }
-
-    handleBackSpace = () => {
-        assert(this.textElements[this.currentTextPositionIndex-1] !== " ");
-
-        this.textElements[this.currentTextPositionIndex-1].color = Color.NEUTRAL;
-        this.decrementCurrentTextPositionIndex();
-    }
 }
 
 export class TextElement{
     char = "";
     color = Color.NEUTRAL;
+    backgroundColor = Color.WHITE;
 
     constructor(char){
         this.char = char;
@@ -85,5 +85,6 @@ export class TextElement{
 export let Color= {
     NEUTRAL: "black",
     RED: "red",
-    GREEN: "green"
+    GREEN: "green",
+    WHITE: "white"
 }

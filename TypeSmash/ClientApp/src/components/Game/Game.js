@@ -2,21 +2,26 @@ import React, {Component} from "react";
 import * as signalR from "@aspnet/signalr";
 import Catcher from "./Catcher";
 import Writer from "./Writer";
-import Cookies from "universal-cookie";
+import LeaveGameButton from "./LeaveGameButton";
 
 export default class Game extends Component{
 
     state = {
         hubConnection: null,
         gameReady: false,
-        playerRole: ""
+        playerRole: "",
+        gameEnded: false
+    }
+
+    endGame = () => {
+        this.setState({gameEnded: true});
     }
 
     setGroupIdCookieAndPlayerRole = (groupId, playerRole) => {
 
         console.log(playerRole);
 
-        localStorage.setItem("groupId", groupId);
+        sessionStorage.setItem("groupId", groupId);
 
         this.setState({gameReady: true, playerRole: playerRole});
     }
@@ -43,11 +48,17 @@ export default class Game extends Component{
                 <div> LFP </div>
                 :
                 this.state.playerRole === "Writer" ? 
-                <Writer hubConnection={this.state.hubConnection}/>  
+                <Writer hubConnection={this.state.hubConnection} gameEnded={this.state.gameEnded} endGame={this.endGame}/>  
                 : this.state.playerRole === "Catcher" ?
-                <Catcher hubConnection={this.state.hubConnection}/>
+                <Catcher hubConnection={this.state.hubConnection} gameEnded={this.state.gameEnded} endGame={this.endGame}/>
                 :
                 <div> Something has occurred! </div>
+            }
+            {
+                this.state.gameEnded ?
+                    <LeaveGameButton/>
+                :
+                    null
             }
         </div>
         );
