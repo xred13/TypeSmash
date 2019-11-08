@@ -33,7 +33,21 @@ export default class Writer extends Component {
 
         if(keyPressed === "Enter"){
             if(this.state.enterKeyPressed === 1){
+
+                if(event.target.value !== ""){
+                    let inputValue = event.target.value;
+                    event.target.value = "";
+
+                    event.preventDefault();
+
+                    this.addInputToTextState(inputValue);
+                    this.addInputToTextState(" ");
+
+                    await this.sendInput(inputValue);
+                }
+
                 this.props.endGame();
+                
                 await this.sendInput("End Game");
             }
             else{
