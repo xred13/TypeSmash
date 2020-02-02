@@ -1,0 +1,42 @@
+.login-form-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 25%;
+  width: 65%;
+  margin-bottom: 25%;
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  
+    .login-form-invalid-username-message{
+      position: absolute;
+      height: 20px;
+      line-height: 20px;
+      padding: 0px 10px;
+      top: -20px;
+    }
+  
+    input {
+      font-size: 35px;
+      height: 60px;
+      width: 250px;
+      background-color: rgb(125, 207, 125);
+      color: rgb(245, 241, 241);
+      border: 0;
+      padding: 3px;
+    }
+  
+    .login-form-username-validation-icon{
+      position: absolute;
+      top: 18px;
+      left: 251px;
+    }
+  }
+}
+

@@ -1,0 +1,26 @@
+.gamemenu-play-button{
+    display: inline-flex;
+    margin-left: calc(50% - 300px);
+    margin-top: 20%;
+    border: 3px solid #000;
+
+    button{
+        width: 400px;
+        height: 100px;
+        color: rgb(230, 230, 230);
+        font-size: 90px;
+        line-height: 0px;
+        background-color: rgb(89, 182, 89);
+        font-family: 'Courier New', Courier, monospace;
+        border: 3px solid #000;
+        margin: 100px;
+
+        &:hover{
+            background-color: rgb(74, 153, 80);
+
+            .gamemenu-play-button{
+                background-color: rgb(180, 180, 180);
+            }
+        }
+    }
+}

@@ -10,7 +10,7 @@ class GameMenu extends Component{
 
     render(){
         return(
-            <div>
+            <div className="gamemenu-play-button">
                 <button onClick={this.playButtonClicked}>Play!</button>
             </div>
         );

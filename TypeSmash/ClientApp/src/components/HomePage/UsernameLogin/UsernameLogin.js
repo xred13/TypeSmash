@@ -1,7 +1,11 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {withRouter} from "react-router";
-import {Alert, Button, ButtonToolbar} from "react-bootstrap";
+import { Icon } from "semantic-ui-react";
+import typingImage from "./../../../images/typingduel.png";
+import {UsernameValidationIcon} from "./UsernameValidationIcon";
+import {PlayButton} from "./PlayButton";
+import {InvalidUsernameMessage} from "./InvalidUsernameMessage";
 
 class UsernameLogin extends Component{
 
@@ -33,6 +37,15 @@ class UsernameLogin extends Component{
     }
     else{
       this.setState({isUsernameValid: false});
+    }
+  }
+
+  onKeyDown = (event) => {
+    let keyPressed = event.key;
+
+    if(keyPressed === "Enter"){
+      event.preventDefault();
+      this.submitUsername(event);
     }
   }
 
@@ -83,36 +96,20 @@ class UsernameLogin extends Component{
 
   render(){
     return (
-      <div className="login-main-div">
-        <div className="login-form-main">
-          <div className="login-form">
-            <form>
-              <input
-                type="text"
-                id="username"
-                onChange={this.onChangeUpdateStateUsername}
-                placeholder="Username"
-              />
-            </form>
-            <div className="login-form-warning">
-              {this.isUsernameValid() === false ? (
-                <Alert bsStyle="danger" className="login-form-warning-alert">Invalid Username</Alert>
-              ) : this.isUsernameAvailable() ? (
-                <Alert bsStyle="success" className="login-form-warning-alert" >Username available</Alert>
-              ) : (
-                <Alert bsStyle="danger" className="login-form-warning-alert">Username unavailable</Alert>
-              )}
-            </div>
-            <ButtonToolbar>
-              <Button
-                bsStyle="success"
-                bsSize="large"
-                onClick={this.submitUsername}
-              >
-                Play!
-              </Button>
-            </ButtonToolbar>
-          </div>
+      <div className="login-form-main">
+        <div className="login-form">
+          <InvalidUsernameMessage username={this.state.username} isUsernameValid={this.state.isUsernameValid}/>
+          <form>
+            <input
+              type="text"
+              id="username"
+              onKeyDown={(event) => this.onKeyDown(event)}
+              onChange={(event) => this.onChangeUpdateStateUsername(event)}
+              placeholder="Username"
+            />
+          </form>
+          <UsernameValidationIcon isUsernameValid={this.state.isUsernameValid} isUsernameAvailable={this.state.isUsernameAvailable} />
+          <PlayButton className="login-form-play-button" submitUsername={(event) => this.submitUsername(event)} />
         </div>
       </div>
     );

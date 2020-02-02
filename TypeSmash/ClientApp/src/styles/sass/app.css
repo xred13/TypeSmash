@@ -8,21 +8,6 @@ html, body {
   width: 100%;
 }
 
-.login-main-div {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  height: 100%;
-  width: 100%;
-  background-color: #93dfcc;
-}
-
 .login-form-main {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -37,14 +22,12 @@ html, body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  background-color: white;
-  border-radius: 50%;
   height: 25%;
   width: 65%;
   margin-bottom: 25%;
 }
 
-.login-form {
+.login-form-main .login-form {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -58,26 +41,76 @@ html, body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  position: relative;
 }
 
-.login-form input {
+.login-form-main .login-form .login-form-invalid-username-message {
+  position: absolute;
+  height: 20px;
+  line-height: 20px;
+  padding: 0px 10px;
+  top: -20px;
+}
+
+.login-form-main .login-form input {
   font-size: 35px;
   height: 60px;
   width: 250px;
   background-color: #7dcf7d;
-  color: #0f0b0b;
+  color: #f5f1f1;
+  border: 0;
+  padding: 3px;
 }
 
-.login-form-warning {
-  display: inline-block;
-  margin-top: 5%;
-  margin-top: 3px;
+.login-form-main .login-form .login-form-username-validation-icon {
+  position: absolute;
+  top: 18px;
+  left: 251px;
 }
 
-.login-form-warning-alert {
-  margin-bottom: 10px;
-  height: 20px;
-  line-height: 20px;
-  padding: 0px 10px;
+.homepage-main-div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+  width: 100%;
+  background-color: #93dfcc;
+  background-size: cover;
+  background-image: url("./../../images/typingduel.png");
+}
+
+.gamemenu-play-button {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  margin-left: calc(50% - 300px);
+  margin-top: 20%;
+  border: 3px solid #000;
+}
+
+.gamemenu-play-button button {
+  width: 400px;
+  height: 100px;
+  color: #e6e6e6;
+  font-size: 90px;
+  line-height: 0px;
+  background-color: #59b659;
+  font-family: 'Courier New', Courier, monospace;
+  border: 3px solid #000;
+  margin: 100px;
+}
+
+.gamemenu-play-button button:hover {
+  background-color: #4a9950;
+}
+
+.gamemenu-play-button button:hover .gamemenu-play-button {
+  background-color: #b4b4b4;
 }
 /*# sourceMappingURL=app.css.map */
